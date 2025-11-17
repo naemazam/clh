@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLH Employee Hub | Pro Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Define the glassmorphism effect with a subtle shadow and border */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08); /* More subtle white tint */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Deep Indigo Background with a professional gradient */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #1f114c 0%, #0c0717 100%); /* Deep space indigo/purple */
+            min-height: 100vh;
+            color: #e2e8f0; /* Soft white text */
+            padding-bottom: 3rem;
+        }
+
+        /* Navigation Button Style */
+        .nav-btn {
+            background-color: transparent;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: #06b6d4; /* Teal accent on hover */
+        }
+
+        .nav-btn.bg-white\/30 {
+            background-color: #06b6d4; /* Teal solid color for active state */
+            color: #0c0717; /* Dark text for contrast */
+            font-weight: 700;
+        }
+
+        /* Timeline styling refinement */
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem; /* Center the line */
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: #334155; /* Slate line */
+        }
+
+        .timeline-label {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 2rem;
+            height: 2rem;
+            background-color: #06b6d4; /* Teal accent */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            z-index: 20;
+            box-shadow: 0 0 0 4px #1f114c; /* Outer ring matching background */
+        }
+
+        /* Mind Map styling refinement */
+        .mind-map-node {
+            border: 2px solid;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 10;
+        }
+
+        .mind-map-node-header {
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 0.75rem;
+            border-radius: 6px 6px 0 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Level Connector styling */
+        .level-connector {
+            position: absolute;
+            width: 2px;
+            background-color: #475569; /* Slate gray line */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+
+        <!-- Header and Navigation -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 p-4 glass-card rounded-xl">
+            <h1 class="text-3xl font-extrabold tracking-wider text-cyan-400">CLH Hub Pro</h1>
+            <nav class="mt-4 md:mt-0 flex flex-wrap justify-center">
+                <button class="nav-btn p-3 mx-1 text-sm md:text-base font-medium rounded-lg text-white/90" data-page="landing">Home</button>
+                <button class="nav-btn p-3 mx-1 text-sm md:text-base font-medium rounded-lg text-white/90" data-page="mindmap">Task Mind Map</button>
+                <button class="nav-btn p-3 mx-1 text-sm md:text-base font-medium rounded-lg text-white/90" data-page="weeklytasks">Weekly Tasks</button>
+                <button class="nav-btn p-3 mx-1 text-sm md:text-base font-medium rounded-lg text-white/90" data-page="timeline">Org Timeline</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="content-container">
+            <!-- Content will be injected here by JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        // --- Data Mockup (Unchanged from previous update) ---
+        const companyMoto = "Empowering Clarity, Leading Humanity.";
+
+        const notices = [
+            { title: "Q4 Strategy Meeting", content: "Mandatory meeting for all leads on Friday at 10:00 AM. Please review the pre-read material.", date: "Nov 25, 2025" },
+            { title: "New Leave Policy Update", content: "The updated paid time off policy is now available in the shared drive. Take note of the flexible holiday changes.", date: "Nov 18, 2025" },
+            { title: "Project Phoenix Launch", content: "Successful launch of Project Phoenix! Congratulations to the team. Milestone achieved.", date: "Nov 17, 2025" },
+        ];
+
+        const employees = {
+            CEO: [{ id: 1, name: "Naem Azam Chow", label: "CEO", power: "Vision & Strategy", color: "red-500", icon: "crown", tasks: ["Set 2026 Objectives", "Board Reporting", "Executive Hiring"] }],
+            CSOCIO: [
+                { id: 2, name: "Monzil", label: "CSO", power: "Operational Excellence", color: "yellow-500", icon: "shield", tasks: ["Supply Chain Review", "Risk Management", "Process Audits"] },
+                { id: 3, name: "Lipi", label: "CIO", power: "Technology & Systems", color: "yellow-500", icon: "cpu", tasks: ["Cloud Strategy", "Data Security", "Infrastructure Planning"] }
+            ],
+            // 5 Moderators
+            Moderators: [
+                { id: 4, name: "Mim", label: "Moderator (A)", power: "Team Lead Ops", color: "green-500", icon: "users", tasks: ["Daily Standups", "Conflict Resolution"] },
+                { id: 5, name: "Eite", label: "Moderator (B)", power: "Team Lead Tech", color: "green-500", icon: "check-circle", tasks: ["Workflow Documentation", "KPI Tracking"] },
+                { id: 8, name: "Tamanna", label: "Moderator (C)", power: "Process Improvement", color: "green-500", icon: "user-check", tasks: ["Process Audits", "SOP Updates"] },
+                { id: 9, name: "Farhin", label: "Moderator (D)", power: "Quality Assurance", color: "green-500", icon: "clipboard-check", tasks: ["QA Oversight", "Training"] },
+                { id: 10, name: "Sabbir", label: "Moderator (E)", power: "Resource Management", color: "green-500", icon: "briefcase", tasks: ["Resource Mgmt", "Budget Tracking"] }
+            ],
+            // 7 Ambassadors
+            Ambassadors: [
+                { id: 6, name: "Ibrahim", label: "Ambassador (1)", power: "Client Outreach", color: "blue-500", icon: "globe", tasks: ["Lead Gen", "Networking"] },
+                { id: 7, name: "lamim", label: "Ambassador (2)", power: "Brand Advocacy", color: "blue-500", icon: "message-circle", tasks: ["Social Media", "Content"] },
+                { id: 11, name: "fahim", label: "Ambassador (3)", power: "APAC Market", color: "blue-500", icon: "map-pin", tasks: ["Market Research", "Local Events"] },
+                { id: 12, name: "Arif", label: "Ambassador (4)", power: "EMEA Market", color: "blue-500", icon: "layout-grid", tasks: ["Event Coordination", "Local PR"] },
+                { id: 13, name: "Noor", label: "Ambassador (5)", power: "Partnerships", color: "blue-500", icon: "handshake", tasks: ["Contract Review", "Relationship Mgmt"] },
+                { id: 14, name: "Farjana", label: "Ambassador (6)", power: "Community Dev", color: "blue-500", icon: "heart", tasks: ["Forum Moderation", "Feedback Mgmt"] },
+                { id: 15, name: "nabila", label: "Ambassador (7)", power: "Affiliate Programs", color: "blue-500", icon: "link", tasks: ["Recruitment", "Performance Tracking"] }
+            ]
+        };
+
+        const weeklyTasks = [
+            { name: "Monzil", task: "maintain Team", link: "#", progress: 0, deadline: "2025-11-22T17:00:00", assigned_tasks: ["Review P&L", "Board Prep"] },
+            { name: "Lipi", task: "post Appove", link: "#", progress: 0, deadline: "2025-11-22T09:00:00", assigned_tasks: ["Market Analysis", "Vendor Negotiation"] },
+            { name: "Mim", task: "Post Appove", link: "#", progress: 0, deadline: "2025-11-22T12:00:00", assigned_tasks: ["Cloud Migration", "System Upgrade"] },
+            { name: "Tamanna", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T14:00:00", assigned_tasks: ["Weekly Syncs", "Conflict Resolution"] },
+            { name: "Farhin", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T10:00:00", assigned_tasks: ["HR Training", "Support Tickets"] },
+            { name: "Sabbir", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "Ibrahim", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "lamim", task: "Find News EveryDay", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "fahim", task: "Find News EveryDay", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "Arif", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "Noor", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "Farjana", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "nabila", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+            { name: "sakib", task: "2 Post In Fb", link: "#", progress: 0, deadline: "2025-11-22T18:00:00", assigned_tasks: ["Social Campaign", "Lead Generation"] },
+        ];
+
+
+        // --- Utility Functions ---
+
+        /**
+         * Converts milliseconds to a human-readable days, hours, minutes, seconds string.
+         * @param {number} ms - Milliseconds remaining.
+         * @returns {string} - Formatted time string.
+         */
+        const msToTime = (ms) => {
+            if (ms < 0) return "Deadline Passed";
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+            return `${days}D ${hours}H ${minutes}M ${seconds}S`;
+        };
+
+        // --- Page Rendering Functions ---
+
+        /**
+         * 1st Page: Landing Page (Moto & Notices)
+         */
+        const renderLandingPage = () => {
+            // Moto Section (Glass Hover Effect)
+            const motoHtml = `
+                <section class="mb-12 p-10 text-center glass-card rounded-3xl">
+                    <h2 class="text-xl font-light text-white/60">Our Vision:</h2>
+                    <h3 class="text-5xl md:text-7xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-white leading-tight">
+                        ${companyMoto}
+                    </h3>
+                    <p class="mt-4 text-white/80 max-w-2xl mx-auto">Driving organizational success through clear communication and human-centric leadership.</p>
+                </section>
+            `;
+
+            // Notice Section
+            const noticesHtml = notices.map(notice => `
+                <div class="glass-card p-6 rounded-xl mb-4 bg-white/5 border-l-4 border-cyan-400 hover:border-l-8 hover:shadow-lg">
+                    <h4 class="text-xl font-semibold mb-1 text-white">${notice.title}</h4>
+                    <p class="text-white/70 mb-2 text-sm">${notice.content}</p>
+                    <span class="text-xs font-mono text-cyan-300/80">Posted: ${notice.date}</span>
+                </div>
+            `).join('');
+
+            return `
+                ${motoHtml}
+                <section class="mt-12">
+                    <h2 class="text-3xl font-bold mb-6 text-cyan-400 flex items-center">
+                        <i data-lucide="siren" class="w-6 h-6 mr-3"></i> Priority Announcements
+                    </h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        ${noticesHtml}
+                    </div>
+                </section>
+            `;
+        };
+
+
+        /**
+         * 2nd Page: Employee Task Mind Map (Updated to 4 Levels - Responsive)
+         */
+        const renderMindMapPage = () => {
+            const getIcon = (iconName) => `<i data-lucide="${iconName}" class="w-4 h-4 mr-2"></i>`;
+
+            const renderNodes = (empArray, color) => {
+                return empArray.map(e => `
+                    <div class="mind-map-node border-t-4 border-${color} glass-card rounded-lg overflow-hidden shadow-lg hover:shadow-cyan-500/30">
+                        <div class="mind-map-node-header bg-${color}/10">
+                            <p class="font-bold text-sm md:text-base flex items-center text-white">
+                                ${getIcon(e.icon)}${e.name}
+                            </p>
+                            <span class="text-xs font-mono text-${color} block">${e.label}</span>
+                        </div>
+                        <div class="p-3">
+                            <p class="text-xs text-white/80 italic mb-2">${e.power}</p>
+                            <ul class="text-xs list-disc list-inside mt-1 pl-2 space-y-0.5 text-white/70">
+                                ${e.tasks.map(t => `<li>${t}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            const ceo = employees.CEO[0];
+            const csoCioHtml = renderNodes(employees.CSOCIO, 'yellow-400');
+            const moderatorsHtml = renderNodes(employees.Moderators, 'green-4400');
+            const ambassadorsHtml = renderNodes(employees.Ambassadors, 'blue-400');
+
+
+            return `
+                <h2 class="text-4xl font-bold mb-8 text-center text-white">Organizational Hierarchy & Core Tasks</h2>
+                <div class="max-w-6xl mx-auto space-y-12 relative">
+
+                    <!-- Level 1: CEO -->
+                    <div class="flex justify-center relative">
+                        <div class="mind-map-node border-4 border-red-500 bg-red-500/30 p-6 rounded-2xl shadow-2xl text-center w-full max-w-sm">
+                            <p class="text-2xl font-black flex items-center justify-center text-white">${getIcon(ceo.icon)}${ceo.name}</p>
+                            <p class="text-lg italic text-white/80 mt-1">${ceo.power}</p>
+                            <p class="text-sm mt-2 text-white/60">Top-Level Decisions & Vision</p>
+                        </div>
+                    </div>
+
+                    <!-- Global Vertical Connector Line -->
+                    <div class="level-connector h-6 absolute top-28 bottom-0"></div>
+
+                    <!-- Level 2: CSO/CIO -->
+                    <div class="pt-2 relative">
+                        <h3 class="text-center text-2xl font-semibold mb-4 text-yellow-400">Level 2: Executive Leads</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${csoCioHtml}
+                        </div>
+                    </div>
+
+                    <!-- Level 3: Moderators (5 Team Leads) -->
+                    <div class="pt-2 relative">
+                        <h3 class="text-center text-2xl font-semibold mb-4 text-green-400">Level 3: Team Moderators (5)</h3>
+                        <!-- Responsive grid for 5 elements: 2 columns on mobile, 3 on medium, 5 on large -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            ${moderatorsHtml}
+                        </div>
+                    </div>
+
+                    <!-- Level 4: Ambassadors (7 Representatives) -->
+                    <div class="pt-2 pb-8 relative">
+                        <h3 class="text-center text-2xl font-semibold mb-4 text-blue-400">Level 4: Client Ambassadors (7)</h3>
+                        <!-- Responsive grid for 7 elements: 2 columns on mobile, 3 on medium, 4 on large, 7 on extra large -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+                            ${ambassadorsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        /**
+         * 3rd Page: Weekly Tasks & Countdown (Responsive Table)
+         */
+        const renderWeeklyTasksPage = () => {
+            const tableRows = weeklyTasks.map(task => {
+                const isLate = (new Date(task.deadline).getTime() < Date.now() && task.progress < 100);
+                let progressColor = 'bg-cyan-500';
+                if (task.progress >= 90) progressColor = 'bg-green-500';
+                else if (task.progress <= 30) progressColor = 'bg-red-500';
+
+                return `
+                    <tr class="hover:bg-white/10 transition-colors ${isLate ? 'bg-red-500/20' : ''}">
+                        <td class="p-4 rounded-l-xl whitespace-nowrap">${task.name}</td>
+                        <td class="p-4"><a href="${task.link}" class="text-cyan-300 hover:text-cyan-200 underline">${task.task}</a></td>
+                        <td class="p-4">
+                            <div class="w-full bg-gray-700 rounded-full h-2.5">
+                                <div class="h-2.5 rounded-full ${progressColor}" style="width: ${task.progress}%"></div>
+                            </div>
+                            <span class="text-xs mt-1 block text-white/70">${task.progress}% Done</span>
+                        </td>
+                        <td class="p-4 text-sm font-mono whitespace-nowrap" data-deadline="${task.deadline}">...</td>
+                        <td class="p-4 rounded-r-xl text-sm whitespace-nowrap">${new Date(task.deadline).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Find the closest future deadline for the main countdown
+            const closestFutureTask = weeklyTasks
+                .filter(t => new Date(t.deadline).getTime() > Date.now())
+                .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))[0];
+
+            let closestTaskName = closestFutureTask ? closestFutureTask.task : "No active future deadlines.";
+
+
+            return `
+                <h2 class="text-4xl font-bold mb-8 text-center text-white">Weekly Task & Deadline Tracker</h2>
+
+                <!-- Main Countdown Timer -->
+                <div id="main-countdown" class="glass-card p-6 rounded-xl mb-8 text-center bg-cyan-900/20 border-cyan-400">
+                    <h3 class="text-xl font-medium text-cyan-300">Target Deadline Countdown:</h3>
+                    <p class="text-2xl font-semibold mb-2 text-white">${closestTaskName}</p>
+                    <p id="countdown-display" class="text-6xl font-black text-cyan-100 mt-4">--:--:--</p>
+                    <p class="text-sm mt-2 text-cyan-300/80">(Tracking the earliest upcoming task in the table below)</p>
+                </div>
+
+                <!-- Tasks Table (Scrollable on small screens) -->
+                <div class="glass-card rounded-xl p-0">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-white/10">
+                            <thead class="bg-white/10">
+                                <tr>
+                                    <th class="p-4 text-left text-sm font-medium">Employee Name</th>
+                                    <th class="p-4 text-left text-sm font-medium">Task Name</th>
+                                    <th class="p-4 text-left text-sm font-medium">Progress</th>
+                                    <th class="p-4 text-left text-sm font-medium">Time Left</th>
+                                    <th class="p-4 text-left text-sm font-medium">Deadline Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        };
+
+        let countdownInterval;
+
+        /**
+         * Logic for updating all countdowns.
+         */
+        const startCountdowns = () => {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            const updateTimers = () => {
+                const now = Date.now();
+                let closestMs = -1;
+
+                // Update individual task timers
+                document.querySelectorAll('[data-deadline]').forEach(el => {
+                    const deadline = new Date(el.dataset.deadline).getTime();
+                    const msRemaining = deadline - now;
+                    el.textContent = msToTime(msRemaining);
+
+                    // Check if this task is the closest future one
+                    if (msRemaining > 0 && (closestMs === -1 || msRemaining < closestMs)) {
+                        closestMs = msRemaining;
+                    }
+                });
+
+                // Update the main countdown timer
+                const mainCountdownEl = document.getElementById('countdown-display');
+                if (mainCountdownEl) {
+                    mainCountdownEl.textContent = msToTime(closestMs);
+                    if (closestMs < 0) {
+                        mainCountdownEl.textContent = "All deadlines passed for now!";
+                        if (countdownInterval) clearInterval(countdownInterval);
+                    }
+                }
+            };
+
+            updateTimers(); // Initial call
+            countdownInterval = setInterval(updateTimers, 1000);
+        };
+
+
+        /**
+         * 4th Page: Employee Timeline
+         */
+        const renderTimelinePage = () => {
+            const structure = [
+                { title: "Level 1: CEO (Visionary)", label: "I", color: "red-500", key: "CEO" },
+                { title: "Level 2: Executive Leads (CSO & CIO)", label: "II", color: "yellow-400", key: "CSOCIO" },
+                { title: "Level 3: Team Moderators (Operations)", label: "III", color: "green-400", key: "Moderators" },
+                { title: "Level 4: Client Ambassadors (Outreach)", label: "IV", color: "blue-400", key: "Ambassadors" },
+            ];
+
+            const timelineHtml = structure.map(tier => {
+                const employeeList = employees[tier.key].map(e => `
+                    <li class="text-base text-white/90">
+                        <strong class="font-semibold">${e.name}</strong> - ${e.power}
+                    </li>
+                `).join('');
+
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-label bg-cyan-500 text-sm">${tier.label}</div>
+                        <div class="glass-card p-6 rounded-xl border-l-4 border-${tier.color} shadow-lg">
+                            <h3 class="text-2xl font-bold mb-2 text-${tier.color}">${tier.title}</h3>
+                            <ul class="list-disc list-inside space-y-1 pl-4 text-sm">
+                                ${employeeList}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <h2 class="text-4xl font-bold mb-8 text-center text-white">CLH Organizational Timeline</h2>
+                <p class="text-center text-white/70 mb-8 max-w-2xl mx-auto">This visual timeline outlines the hierarchy and corresponding responsibilities from top-level strategy to client outreach.</p>
+                <div class="max-w-3xl mx-auto pt-4 pb-8">
+                    ${timelineHtml}
+                </div>
+            `;
+        };
+
+        // --- SPA Navigation Controller ---
+
+        const pageRenderers = {
+            landing: renderLandingPage,
+            mindmap: renderMindMapPage,
+            weeklytasks: renderWeeklyTasksPage,
+            timeline: renderTimelinePage
+        };
+
+        const showPage = (pageName) => {
+            const container = document.getElementById('content-container');
+            const renderer = pageRenderers[pageName];
+
+            // Clear any running interval (specifically for the countdown)
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            if (renderer) {
+                // Render content
+                container.innerHTML = renderer();
+
+                // Call Lucide to render icons in the new content
+                lucide.createIcons();
+
+                // Handle post-render tasks for specific pages
+                if (pageName === 'weeklytasks') {
+                    startCountdowns();
+                }
+
+                // Update active navigation button style
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('bg-white/30');
+                    if (btn.getAttribute('data-page') === pageName) {
+                        btn.classList.add('bg-white/30');
+                    }
+                });
+
+            } else {
+                container.innerHTML = `<div class="p-8 text-center text-red-400">Page not found: ${pageName}</div>`;
+            }
+        };
+
+        // --- Event Listeners and Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up navigation event listeners
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    showPage(e.target.getAttribute('data-page'));
+                });
+            });
+
+            // Load the landing page by default
+            showPage('landing');
+        });
+
+    </script>
+</body>
+</html>
